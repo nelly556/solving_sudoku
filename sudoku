@@ -1,0 +1,84 @@
+function solveSudoku(board) {
+    if (solveHelper(board)) {
+        return board;
+    }
+    return "No solution exists";
+}
+
+function solveHelper(board) {
+    const emptySpot = findEmptySpot(board);
+    if (!emptySpot) {
+        return true; // No empty spot left, puzzle solved
+    }
+
+    const [row, col] = emptySpot;
+
+    for (let num = 1; num <= 9; num++) {
+        if (isValid(board, row, col, num)) {
+            board[row][col] = num;
+
+            if (solveHelper(board)) {
+                return true;
+            }
+
+            board[row][col] = 0; // backtrack
+        }
+    }
+    return false; // no solution found
+}
+
+function findEmptySpot(board) {
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (board[row][col] === 0) {
+                return [row, col];
+            }
+        }
+    }
+    return null; // if no empty spot left
+}
+
+function isValid(board, row, col, num) {
+    // Check if the number is not already present in the row
+    for (let i = 0; i < 9; i++) {
+        if (board[row][i] === num) {
+            return false;
+        }
+    }
+
+    // Check if the number is not already present in the column
+    for (let i = 0; i < 9; i++) {
+        if (board[i][col] === num) {
+            return false;
+        }
+    }
+
+    // Check if the number is not already present in the 3x3 box
+    const startRow = Math.floor(row / 3) * 3;
+    const startCol = Math.floor(col / 3) * 3;
+
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (board[startRow + i][startCol + j] === num) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// Example usage:
+const sudokuBoard = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+];
+
+console.log(solveSudoku(sudokuBoard));
